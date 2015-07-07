@@ -1,11 +1,18 @@
 package nl.rug.search.cpptool.metrics;
 
 import nl.rug.search.cpptool.api.DeclContainer;
+import nl.rug.search.cpptool.api.DeclType;
+import nl.rug.search.cpptool.api.Declaration;
 import nl.rug.search.cpptool.api.T;
+import nl.rug.search.cpptool.api.data.CxxFunction;
+import nl.rug.search.cpptool.api.data.CxxRecord;
 import nl.rug.search.cpptool.api.io.Assembler;
 import nl.rug.search.cpptool.api.util.IterTools;
+import nl.rug.search.cpptool.runtime.data.CxxRecordData;
 
 import java.io.File;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -42,6 +49,24 @@ public class Main {
         //result.includes().forEach(System.out::println);
 
         //Find and print all C++ classes in the declaration tree
-        IterTools.stream(result).filter(T::isCxxClass).forEach(System.out::println);
+        Stream<Declaration> classes = IterTools.stream(result).filter(T::isCxxClass);
+
+        classes.forEach(c -> {
+            System.out.println(c.name());
+            CxxRecord c_data = c.data(CxxRecord.class).get(); // Get the c++ class data
+
+            System.out.println("\tPARENTS");
+            c_data.parents().forEach(p -> System.out.println("\t" + p.name())); // Print parents names
+
+            System.out.println("\tMETHODS");
+            IterTools.stream(result)
+                    .filter(d -> d.declarationType() == DeclType.FUNCTION && d.has(CxxFunction.class))
+                    .filter(f -> f.data(CxxFunction.class).get().parentClass() == c_data.type())
+                    .forEach(m -> {
+                        CxxFunction m_data = m.data(CxxFunction.class).get();
+                        System.out.println("\t" + m.name());
+                        m_data.params().params().forEach(p -> System.out.println("\t\t" + p.toString()));
+                    });
+        });
     }
 }
