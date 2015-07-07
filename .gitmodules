@@ -1,0 +1,3 @@
+[submodule "cpptool-lib"]
+	path = cpptool-lib
+	url = https://github.com/search-rug/cpptool-lib

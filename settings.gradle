@@ -1,0 +1,3 @@
+rootProject.name = 'CppTool-Metrics'
+
+include 'cpptool-lib', 'cpptool-lib:cpptool-proto'

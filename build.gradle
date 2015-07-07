@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow' //shadow plugin
+
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+version = '0.1'
+
+dependencies {
+    compile project("cpptool-lib")
+    testCompile 'junit:junit:4.12'
+}
+
+jar {
+  manifest {
+    attributes("Implementation-Title": "CppTool-Metrics", 
+               "Implementation-Version": version,
+               "Main-Class": "nl.rug.search.cpptool.metrics.Main")
+  }
+}
+
+shadowJar {
+
+}
