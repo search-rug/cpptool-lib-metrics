@@ -26,6 +26,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
+tasks['idea'].dependsOn 'build'
+
 jar {
   manifest {
     attributes("Implementation-Title": "CppTool-Metrics", 
