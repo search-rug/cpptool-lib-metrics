@@ -22,7 +22,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 version = '0.1'
 
 dependencies {
-    compile project("cpptool-lib")
+    compile project("cpptool-lib-core")
     testCompile 'junit:junit:4.12'
 }
 
