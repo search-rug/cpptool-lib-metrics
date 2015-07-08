@@ -26,7 +26,34 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-tasks['idea'].dependsOn 'build'
+
+//
+// Intellij Idea configuration
+//
+
+idea {
+    project {
+        jdkName = '1.8'
+        languageLevel = '1.8'
+
+        ipr.withXml { xmlFile ->
+            // setup Git root
+            xmlFile.asNode().component.find { it.@name == 'VcsDirectoryMappings' }.replaceNode {
+                component(name: 'VcsDirectoryMappings') {
+                    mapping(directory: "", vcs: "")
+                    mapping(directory: "\$PROJECT_DIR\$", vcs: 'Git')
+                    mapping(directory: "\$PROJECT_DIR\$/cpptool-lib-core", vcs: 'Git')
+                    mapping(directory: "\$PROJECT_DIR\$/cpptool-lib-core/cpptool-proto", vcs: 'Git')
+                }
+            }
+        }
+    }
+}
+
+
+//
+// Packaging (jar/fatjar) configuration
+//
 
 jar {
   manifest {
