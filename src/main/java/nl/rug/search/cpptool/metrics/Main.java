@@ -59,14 +59,15 @@ public class Main {
             c_data.parents().forEach(p -> System.out.println("\t" + p.name())); // Print parents names
 
             System.out.println("\tMETHODS");
-            IterTools.stream(result)
-                    .filter(d -> d.declarationType() == DeclType.FUNCTION && d.has(CxxFunction.class))
-                    .filter(f -> f.data(CxxFunction.class).get().parentClass() == c_data.type())
-                    .forEach(m -> {
-                        CxxFunction m_data = m.data(CxxFunction.class).get();
-                        System.out.println("\t" + m.name());
+            c.selfContext().ifPresent(c_ctx -> {
+                c_ctx.declarations().forEach(c_decl -> {
+                    if (c_decl.has(CxxFunction.class)) {
+                        CxxFunction m_data = c_decl.data(CxxFunction.class).get();
+                        System.out.println("\t" + c_decl.name());
                         m_data.params().params().forEach(p -> System.out.println("\t\t" + p.toString()));
-                    });
+                    }
+                });
+            });
         });
     }
 }
