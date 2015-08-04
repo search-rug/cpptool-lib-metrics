@@ -56,7 +56,7 @@ public class Main {
             CxxRecord c_data = c.data(CxxRecord.class).get(); // Get the c++ class data
 
             System.out.println("\tPARENTS");
-            c_data.parents().forEach(p -> System.out.println("\t" + p.name())); // Print parents names
+            c_data.parents().forEach(p -> System.out.println("\t" + p.type().name())); // Print parents names
 
             System.out.println("\tMETHODS");
             c.selfContext().ifPresent(c_ctx -> {

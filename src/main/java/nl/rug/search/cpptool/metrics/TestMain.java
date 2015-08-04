@@ -1,9 +1,13 @@
 package nl.rug.search.cpptool.metrics;
 
 import nl.rug.search.cpptool.api.*;
+import nl.rug.search.cpptool.api.data.CxxRecord;
 import nl.rug.search.cpptool.api.io.Assembler;
+import nl.rug.search.cpptool.api.util.IterTools;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -45,18 +49,19 @@ public class TestMain {
         //IterTools.stream(result).filter(T::isCxxClass).forEach(System.out::println);
 
 
+        List<Metrics.node> classes = new ArrayList<>();
+        Metrics.buildInheritance(classes, result);
+
         Metrics.DSC(result);
-        Metrics.NOH(result);
-        Metrics.ANA(result);
-        //Metrics.DAM(result);
+        Metrics.NOH(classes);
+        Metrics.ANA(classes);
+        Metrics.DAM(result);
         Metrics.DCC(result);
         Metrics.CAM(result);
         Metrics.MOA(result);
-        //Metrics.MFA(result);
+        Metrics.MFA(classes);
         Metrics.NOP(result);
-        //Metrics.CIS(result);
+        Metrics.CIS(result);
         Metrics.NOM(result);
-
-
     }
 }
