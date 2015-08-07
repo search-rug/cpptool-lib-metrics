@@ -50,18 +50,21 @@ public class TestMain {
 
 
         List<Metrics.node> classes = new ArrayList<>();
-        Metrics.buildInheritance(classes, result);
+        Metrics.buildClasses(classes, result);
 
-        Metrics.DSC(result);
-        Metrics.NOH(classes);
+        Long DSC = Metrics.DSC(classes);
+        Integer NOH = Metrics.NOH(classes);
         Metrics.ANA(classes);
-        Metrics.DAM(result);
-        Metrics.DCC(result);
-        Metrics.CAM(result);
-        Metrics.MOA(result);
+        Metrics.DAM(classes);
+        Metrics.DCC(classes);
+        Metrics.CAM(classes);
+        Metrics.MOA(classes);
         Metrics.MFA(classes);
-        Metrics.NOP(result);
-        Metrics.CIS(result);
-        Metrics.NOM(result);
+        Metrics.NOP(classes);
+        Metrics.CIS(classes);
+        Metrics.NOM(classes);
+
+        Metrics.QMOOD(classes, DSC, NOH);
+
     }
 }
