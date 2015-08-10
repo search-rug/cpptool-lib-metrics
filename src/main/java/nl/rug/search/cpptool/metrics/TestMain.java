@@ -49,7 +49,7 @@ public class TestMain {
         //IterTools.stream(result).filter(T::isCxxClass).forEach(System.out::println);
 
 
-        List<Metrics.node> classes = new ArrayList<>();
+        List<Node> classes = new ArrayList<>();
         Metrics.buildClasses(classes, result);
 
         Long DSC = Metrics.DSC(classes);

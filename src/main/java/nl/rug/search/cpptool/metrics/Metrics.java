@@ -41,81 +41,20 @@ import java.util.stream.Stream;
  */
 public class Metrics {
 
-
-    /**
-     * Utility Node for the following metrics. Holds declarations, parent-child-inheritance relations, metric results, QMOOD results
-     */
-    public static class node {
-        public Declaration dec;
-        public List<Integer> children = new ArrayList<Integer>();
-        public List<Integer> parents = new ArrayList<Integer>();
-        public List<Integer> rootHeight = new ArrayList<Integer>();
-        public Set<Declaration> inherited = new HashSet<Declaration>();
-
-        // DSC Design Size - Design Size in Classes
-        // NOH Hierarchies - Number of Hierarchies
-        public Double ANA;  // Abstraction - Average Number of Ancestors
-        public Double DAM;  // Encapsulation - Data Access Metric
-        public Integer DCC; // Coupling - Direct Class Coupling
-        public Double CAM;  // Cohesion - Cohesion Among Methods in Class
-        public Integer MOA; // Composition - Measure of Aggregation
-        public Double MFA;  // Inheritance - Measure of Functional Abstraction
-        public Long NOP;    // Polymorphism - Number of Polymorphic Methods
-        public Integer CIS; // Messaging - Class Interface Size
-        public Long NOM;    // Complexity - Number of Methods
-
-        public Double Reusability;
-        public Double Flexibility;
-        public Double Understandability;
-        public Double Functionality;
-        public Double Extendibility;
-        public Double Effectiveness;
-
-        node( ){ }
-        node(Declaration d)
-        {
-            dec = d;
-        }
-        node(node n)
-        {
-            dec = n.dec;
-            children = new ArrayList<Integer>(n.children);
-            parents = new ArrayList<Integer>(n.parents);
-            rootHeight = new ArrayList<Integer>(n.rootHeight);
-
-            ANA = n.ANA;
-            DAM = n.DAM;
-            DCC = n.DCC;
-            CAM = n.CAM;
-            MOA = n.MOA;
-            MFA = n.MFA;
-            NOP = n.NOP;
-            CIS = n.CIS;
-            NOM = n.NOM;
-
-            Reusability = n.Reusability;
-            Flexibility = n.Flexibility;
-            Understandability = n.Understandability;
-            Functionality = n.Functionality;
-            Extendibility = n.Extendibility;
-            Effectiveness = n.Effectiveness;
-        }
-    }
-
     /**
      *
      * @param list  -   List to search in
-     * @param dc    -   Declaration to be searched in the nodes of the list
-     * @return      -   Index of the node containing the declaration, -1 if not found
+     * @param dc    -   Declaration to be searched in the Nodes of the list
+     * @return      -   Index of the Node containing the declaration, -1 if not found
      */
-    public static int searchList(List <node> list, Declaration dc)
+    public static int searchList(List <Node> list, Declaration dc)
     {
         int index = -1;
-        Iterator<node> i = list.iterator();
+        Iterator<Node> i = list.iterator();
         while(i.hasNext())
         {
             index ++;
-            node n = i.next();
+            Node n = i.next();
             if(n.dec.equals(dc))
             {
                 return index;
@@ -131,10 +70,10 @@ public class Metrics {
      * @param classes   - list containing information on all classes
      * @param rootHeight    - current level of height
      */
-    public static void setHeight(node root, List<node> classes, int rootHeight)
+    public static void setHeight(Node root, List<Node> classes, int rootHeight)
     {
         // set height value of the current root
-        node n = new node(root);
+        Node n = new Node(root);
         n.rootHeight.add(rootHeight);
         int classIndex = searchList(classes, root.dec);
         classes.set(classIndex, n);
@@ -155,7 +94,7 @@ public class Metrics {
      * @param inheritChain  - functions are being inherited down from parents-grandparents to children
      * @param privateFound  - variable to check if parent was defined as private, hence causing a break in the inheritance chain
      */
-    public static void setInherited(node root, List<node> classes, List<Declaration> inheritChain, boolean privateFound)
+    public static void setInherited(Node root, List<Node> classes, List<Declaration> inheritChain, boolean privateFound)
     {
 
         if (privateFound == true)    // private declaration was found in parent, inherited function list should be cleared
@@ -245,11 +184,11 @@ public class Metrics {
      * @param classes   -
      * @param result
      */
-    public static void buildClasses(List<node> classes, DeclContainer result)
+    public static void buildClasses(List<Node> classes, DeclContainer result)
     {
-        // initialize class nodes
+        // initialize class Nodes
         IterTools.stream(result).filter(T::isCxxClass).forEach(cl -> {
-            classes.add(new node(cl));
+            classes.add(new Node(cl));
         });
 
         // set child-parent relations
@@ -260,7 +199,7 @@ public class Metrics {
                     cl.parents.add(parentIndex);
 
                     Integer childIndex = searchList(classes, cl.dec);
-                    node n = new node(classes.get(parentIndex));
+                    Node n = new Node(classes.get(parentIndex));
                     n.children.add(childIndex);
                     classes.set(parentIndex, n);
                 }
@@ -273,11 +212,11 @@ public class Metrics {
         });
 
         // set heights in hierarchy
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
             int heightCounter = 0;
-            node classIndex = i1.next();
+            Node classIndex = i1.next();
             if(classIndex.parents.size() == 0)  // it it's a root class
             {
                 setHeight(classIndex, classes, heightCounter);
@@ -285,10 +224,10 @@ public class Metrics {
         }
 
         // set inherited functions
-        Iterator<node> i2 = classes.iterator();
+        Iterator<Node> i2 = classes.iterator();
         while(i2.hasNext())
         {
-            node classIndex = i2.next();
+            Node classIndex = i2.next();
             List<Declaration> inheritChain = new ArrayList<Declaration>();
             boolean privateFound = false;
             if(classIndex.parents.size() == 0 )  // it it's a root class
@@ -307,7 +246,7 @@ public class Metrics {
      * @param classes
      * @return Total count of all classes
      */
-    public static long DSC(List<node> classes)
+    public static long DSC(List<Node> classes)
     {
         System.out.println("\nDSC");
         //Names of Classes
@@ -326,15 +265,15 @@ public class Metrics {
      * @param classes  -  Requires a classes list built by the buildInheritance function
      * @return Number of hierarchies = Number of root classes(no parents) with at least 1 children
      */
-    public static int NOH(List<node> classes)
+    public static int NOH(List<Node> classes)
     {
         System.out.println("\nNOH");
         System.out.println("ROOTS OF HIERARCHIES: ");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         int rootCounter = 0;
         while(i1.hasNext())
         {
-            node classIndex = i1.next();
+            Node classIndex = i1.next();
             if(classIndex.parents.size() == 0 && classIndex.children.size() != 0)  // it it's a root class with children
             {
                 rootCounter++;
@@ -351,15 +290,15 @@ public class Metrics {
      * @output ANA value for each individual class
      * @param classes  -  Requires a classes list built by the buildInheritance function
      */
-    public static void ANA(List<node> classes)
+    public static void ANA(List<Node> classes)
     {
         System.out.println("\nANA");
         System.out.println("ROOTS OF HIERARCHIES: ");
 
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.name().get());
             Iterator<Integer> i2 = c.rootHeight.iterator();
             double heightSum = 0;
@@ -377,13 +316,13 @@ public class Metrics {
      * @output Number of Private Variables -  Public Variables - Rate of Private/All
      * @param classes
      */
-    public static void DAM(List<node> classes)
+    public static void DAM(List<Node> classes)
     {
         System.out.println("\nDAM");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                     + "\t\t\t\tName: " + c.dec.selfContext().get().name().get());
 
@@ -417,13 +356,13 @@ public class Metrics {
      * 5. DCC - Direct Class Coupling
      * @param classes
      */
-    public static void DCC(List<node> classes)
+    public static void DCC(List<Node> classes)
     {
         System.out.println("\nDCC");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                     + "\t\t\t\tName: " + c.dec.selfContext().get().name().get());
 
@@ -454,7 +393,7 @@ public class Metrics {
 
             System.out.println("Names of Related Classes:\t" + relatedClass
                     + "\nNumber of Related Classes: \t" + relatedClass.size());
-            c.DCC = relatedClass.size();
+            c.DCC = (long)relatedClass.size();
             // for output format, seperator between classes
             System.out.println("\n---------------------------------------------------------------------------\n");
         }
@@ -465,13 +404,13 @@ public class Metrics {
      * 6. CAM - Cohesion Among Methods of Class
      * @param classes
      */
-    public static void CAM(List<node> classes)
+    public static void CAM(List<Node> classes)
     {
         System.out.println("\nCAM");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                     + "\t\t\t\tName: " + c.dec.selfContext().get().name().get());
 
@@ -534,13 +473,13 @@ public class Metrics {
      * 7. MOA - Measure of Aggregation
      * @param classes
      */
-    public static void MOA(List<node> classes)
+    public static void MOA(List<Node> classes)
     {
         System.out.println("\nMOA");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                     + "\t\t\t\tName: " + c.dec.selfContext().get().name().get());
 
@@ -557,7 +496,7 @@ public class Metrics {
             });
 
             System.out.println("Variables with user-defined types:\n" + userDefined + "\n" + userDefined.size());
-            c.MOA = userDefined.size();
+            c.MOA = (long)userDefined.size();
             // for output format, seperator between classes
             System.out.println("---------------------------------------------------------------------------\n");
         }
@@ -568,13 +507,13 @@ public class Metrics {
      * @output MFA value for each individual class
      * @param classes  -  Requires a classes list built by the buildInheritance function
      */
-    public static void MFA(List<node> classes)
+    public static void MFA(List<Node> classes)
     {
         System.out.println("\nMFA");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.name().get());
 
             Stream<Declaration> selfMethods = IterTools.stream(c.dec.selfContext().get().declarations()).filter(T::isFunction);
@@ -603,13 +542,13 @@ public class Metrics {
      * 9. NOP - Number of Polymorphic Methods
      * @param classes
      */
-    public static void NOP(List<node> classes)
+    public static void NOP(List<Node> classes)
     {
         System.out.println("\nNOP");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
                 System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                         +"\t\t\t\tName: " + c.dec.selfContext().get().name().get()
                         +"\t\t\t\tParent: " + c.dec.selfContext().get().parent().name().get());
@@ -639,18 +578,18 @@ public class Metrics {
      * 10. CIS - Class Interface Size - Number of public methods
      * @param classes
      */
-    public static void CIS(List<node> classes)
+    public static void CIS(List<Node> classes)
     {
         System.out.println("\nCIS");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                     + "\t\t\t\tName: " + c.dec.selfContext().get().name().get()
                     + "\t\t\t\tParent: " + c.dec.selfContext().get().parent().name().get());
 
-            int count = 0;
+            long count = 0;
             System.out.println("PUBLIC FUNCTIONS");
             Iterator<Declaration> i = IterTools.stream(c.dec.selfContext().get().declarations())
                     .filter(T::isFunction)
@@ -670,13 +609,13 @@ public class Metrics {
      * 11. NOM - Number of Methods
      * @param classes
      */
-    public static void NOM(List<node> classes)
+    public static void NOM(List<Node> classes)
     {
         System.out.println("\nNOM");
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             System.out.println(c.dec.data((CxxRecord.class)).get().variant().name()
                     + "\t\t\t\tName: " + c.dec.selfContext().get().name().get()
                     + "\t\t\t\tParent: " + c.dec.selfContext().get().parent().name().get());
@@ -701,7 +640,7 @@ public class Metrics {
      * @param DSC
      * @param NOH
      */
-    public static void QMOOD(List<node> classes, Long DSC, Integer NOH)
+    public static void QMOOD(List<Node> classes, Long DSC, Integer NOH)
     {
         System.out.println("\nQMOOD");
         // DSC - Design Size - Design Size in Classes
@@ -715,10 +654,10 @@ public class Metrics {
         // NOP - Polymorphism - Number of Polymorphic Methods
         // CIS - Messaging - Class Interface Size
         // NOM - Complexity - Number of Methods
-        Iterator<node> i1 = classes.iterator();
+        Iterator<Node> i1 = classes.iterator();
         while(i1.hasNext())
         {
-            node c = i1.next();
+            Node c = i1.next();
             double Reusability = ((-0.25)*c.DCC) + ((0.25)*c.CAM) + ((0.5)*c.CIS) + ((0.5)*DSC);
             c.Reusability = Reusability;
             double Flexibility = ((0.25)*c.DAM) + ((-0.25)*c.DCC) + ((0.5)*c.MOA) + ((0.5)*c.NOP);
