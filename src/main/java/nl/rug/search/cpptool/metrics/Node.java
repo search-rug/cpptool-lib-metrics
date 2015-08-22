@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by canberker on 10.08.2015.
  * Utility Node for the metrics. Holds declarations, parent-child-inheritance relations, metric results, QMOOD results
+ * @author Can Berker Cikis <canberker@sabanciuniv.edu>
+ * @since 2015.08.10
  */
 public class Node {
     public Declaration dec;
@@ -22,12 +23,12 @@ public class Node {
     // NOH Hierarchies - Number of Hierarchies
     public Double ANA;  // Abstraction - Average Number of Ancestors
     public Double DAM;  // Encapsulation - Data Access Metric
-    public Long DCC; // Coupling - Direct Class Coupling
+    public Long DCC;    // Coupling - Direct Class Coupling
     public Double CAM;  // Cohesion - Cohesion Among Methods in Class
-    public Long MOA; // Composition - Measure of Aggregation
+    public Long MOA;    // Composition - Measure of Aggregation
     public Double MFA;  // Inheritance - Measure of Functional Abstraction
     public Long NOP;    // Polymorphism - Number of Polymorphic Methods
-    public Long CIS; // Messaging - Class Interface Size
+    public Long CIS;    // Messaging - Class Interface Size
     public Long NOM;    // Complexity - Number of Methods
 
     public Double Reusability;
